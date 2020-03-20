@@ -92,6 +92,23 @@ def create_app(test_config=None):
   TEST: When you click the trash icon next to a question, the question will be removed.
   This removal will persist in the database and when you refresh the page. 
   '''
+    @app.route('/questions/<int:question_id>', methods=['DELETE'])
+    def delete_question(question_id):
+        try:
+            question = Question.query.filter(
+                Question.id == question_id).one_or_none()
+
+            question.delete()
+            result = {'success': True,
+                      'deleted_question': question.format(),
+                      'total_questions': len(Question.query.all())}
+
+            return jsonify(result)
+        except:
+            if question is None:
+                abort(404)
+            else:
+                abort(422)
 
     '''
   @TODO: 
@@ -122,7 +139,7 @@ def create_app(test_config=None):
                       'total_questions': len(Question.query.all())}
             return jsonify(result)
         except:
-            abort(422)
+            abort(405)
 
     '''
   @TODO: 
@@ -161,6 +178,14 @@ def create_app(test_config=None):
   Create error handlers for all expected errors 
   including 404 and 422. 
   '''
+    @app.errorhandler(400)
+    def not_found(error):
+        return jsonify({
+            "success": False,
+            "error": 400,
+            "message": "Bad Request"
+        }), 400
+
     @app.errorhandler(404)
     def not_found(error):
         return jsonify({
@@ -184,5 +209,13 @@ def create_app(test_config=None):
             "error": 422,
             "message": "Unprocessable"
         }), 422
+
+    @app.errorhandler(500)
+    def not_found(error):
+        return jsonify({
+            "success": False,
+            "error": 500,
+            "message": "Server Error"
+        }), 500
 
     return app

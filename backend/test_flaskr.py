@@ -78,6 +78,28 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'Not Found')
 
+    # Delete question
+
+    def test_delete_question(self):
+        res = self.client().delete('/questions/2')
+        data = json.loads(res.data)
+
+        question = Question.query.filter(Question.id == 2).one_or_none()
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(data['deleted_question'])
+        self.assertTrue(data['total_questions'])
+        self.assertEqual(question, None)
+
+    def test_404_if_question_to_delete_not_found(self):
+        res = self.client().delete('questions/450')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Not Found')
+
     # Add new question
 
     def test_add_new_question(self):
@@ -93,9 +115,9 @@ class TriviaTestCase(unittest.TestCase):
         res = self.client().post('questions/45', json=self.new_question)
         data = json.loads(res.data)
 
-        self.assertEqual(res.status_code, 422)
+        self.assertEqual(res.status_code, 405)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Unprocessable')
+        self.assertEqual(data['message'], 'Method Not Allowed')
 
 
 # Make the tests conveniently executable

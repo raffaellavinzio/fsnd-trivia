@@ -77,16 +77,17 @@ The API will return three error types when requests fail:
 
 - 400: Bad Request
 - 404: Not Found
+- 405: Method Not Allowed
 - 422: Not Processable
+- 500: Server Error
 
 2. Create an endpoint to handle GET requests for questions, including pagination (every 10 questions). This endpoint should return a list of questions, number of total questions, current category, categories.
 3. Create an endpoint to handle GET requests for all available categories.
 4. Create an endpoint to DELETE question using a question ID.
-5. Create an endpoint to POST a new question, which will require the question and answer text, category, and difficulty score.
-6. Create a POST endpoint to get questions based on category.
-7. Create a POST endpoint to get questions based on a search term. It should return any questions for whom the search term is a substring of the question.
-8. Create a POST endpoint to get questions to play the quiz. This endpoint should take category and previous question parameters and return a random questions within the given category, if provided, and that is not one of the previous questions.
-9. Create error handlers for all expected errors including 400, 404, 422 and 500.
+5. Create a POST endpoint to get questions based on category.
+6. Create a POST endpoint to get questions based on a search term. It should return any questions for whom the search term is a substring of the question.
+7. Create a POST endpoint to get questions to play the quiz. This endpoint should take category and previous question parameters and return a random questions within the given category, if provided, and that is not one of the previous questions.
+8. Create error handlers for all expected errors including 400, 404, 422 and 500.
 
 ### Endpoint Library
 
@@ -211,6 +212,32 @@ GET '/questions'
 ],
 "success": true,
 "total_questions": 19
+}
+
+```
+
+POST '/questions/{question_id}'
+
+- General:
+
+  - Deletes the question of the given id if it exists.
+  - Returns an object with three keys: the deleted question object, a success boolean value, the updated total number of questions integer
+  - Request Arguments: question id
+
+- Sample: `curl -X DELETE http://127.0.0.1:5000/questions/21`
+
+```
+
+{
+  "deleted_question": {
+    "answer": "Alexander Fleming",
+    "category": 1,
+    "difficulty": 3,
+    "id": 21,
+    "question": "Who discovered penicillin?"
+  },
+  "success": true,
+  "total_questions": 23
 }
 
 ```
