@@ -81,13 +81,9 @@ The API will return three error types when requests fail:
 - 422: Not Processable
 - 500: Server Error
 
-2. Create an endpoint to handle GET requests for questions, including pagination (every 10 questions). This endpoint should return a list of questions, number of total questions, current category, categories.
-3. Create an endpoint to handle GET requests for all available categories.
-4. Create an endpoint to DELETE question using a question ID.
 5. Create a POST endpoint to get questions based on category.
 6. Create a POST endpoint to get questions based on a search term. It should return any questions for whom the search term is a substring of the question.
 7. Create a POST endpoint to get questions to play the quiz. This endpoint should take category and previous question parameters and return a random questions within the given category, if provided, and that is not one of the previous questions.
-8. Create error handlers for all expected errors including 400, 404, 422 and 500.
 
 ### Endpoint Library
 
@@ -220,7 +216,7 @@ POST '/questions/{question_id}'
 
 - General:
 
-  - Deletes the question of the given id if it exists.
+  - Deletes the question of the given `id` if it exists.
   - Returns an object with three keys: the deleted question object, a success boolean value, the updated total number of questions integer
   - Request Arguments: question id
 
@@ -264,6 +260,55 @@ POST '/questions'
   },
   "success": true,
   "total_questions": 24
+}
+
+```
+
+POST '/questions'
+
+- General:
+
+  - Searches matching questions for a given search phrase, case insensitive
+  - Returns any questions for whom the search term is a substring, that is a list of objects with three keys: the list of matching question objects, a success boolean value, the total number of matching questions found integer
+  - Request Arguments: None
+
+- Sample with results: `curl -X POST -H "Content-Type: application/json" -d '{"searchTerm": "title"}' http://127.0.0.1:5000/questions`
+
+```
+
+{
+  "current_category": null,
+  "questions": [
+    {
+      "answer": "Maya Angelou",
+      "category": 4,
+      "difficulty": 2,
+      "id": 5,
+      "question": "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"
+    },
+    {
+      "answer": "Edward Scissorhands",
+      "category": 5,
+      "difficulty": 3,
+      "id": 6,
+      "question": "What was the title of the 1990 fantasy directed by Tim Burton about a young man with multi-bladed appendages?"
+    }
+  ],
+  "success": true,
+  "total_questions": 2
+}
+
+```
+
+- Sample without results: `curl -X POST -H "Content-Type: application/json" -d '{"searchTerm": "pizza"}' http://127.0.0.1:5000/questions`
+
+```
+
+{
+  "current_category": null,
+  "questions": [],
+  "success": true,
+  "total_questions": 0
 }
 
 ```
