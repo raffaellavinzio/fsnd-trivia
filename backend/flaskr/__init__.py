@@ -55,7 +55,7 @@ def create_app(test_config=None):
 
   TEST: At this point, when you start the application
   you should see questions and categories generated,
-  ten questions per page and pagination at the bottom of the screen for three pages.
+  ten questions per page and pagination at the bottom of the screen for two pages.
   Clicking on the page numbers should update the questions. 
   '''
     @app.route('/questions')
@@ -103,6 +103,26 @@ def create_app(test_config=None):
   the form will clear and the question will appear at the end of the last page
   of the questions list in the "List" tab.  
   '''
+    @app.route('/questions', methods=['POST'])
+    def add_question():
+        body = request.get_json()
+
+        question = body.get('question', None)
+        answer = body.get('answer', None)
+        difficulty = body.get('difficulty', None)
+        category = body.get('category', None)
+
+        try:
+            question = Question(question=question, answer=answer,
+                                difficulty=difficulty, category=category)
+            question.insert()
+
+            result = {'success': True,
+                      'added_question': question.format(),
+                      'total_questions': len(Question.query.all())}
+            return jsonify(result)
+        except:
+            abort(422)
 
     '''
   @TODO: 
@@ -158,11 +178,11 @@ def create_app(test_config=None):
         }), 405
 
     @app.errorhandler(422)
-    def unprocessable_entity(error):
+    def unprocessable(error):
         return jsonify({
             "success": False,
             "error": 422,
-            "message": "Unprocessable Entity"
+            "message": "Unprocessable"
         }), 422
 
     return app

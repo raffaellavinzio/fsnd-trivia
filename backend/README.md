@@ -95,9 +95,11 @@ GET '/categories'
 - General:
 
   - Returns an object with two keys, categories, a dictionary object of id: category_string key:value pairs, and success, a boolean for the query execution status.
-  - Sample: curl http://127.0.0.1:5000/categories
+  - Request Arguments: None
 
-- Request Arguments: None
+- Sample: `curl http://127.0.0.1:5000/categories`
+
+```
 
 {
 "categories": {
@@ -111,14 +113,19 @@ GET '/categories'
 "success": true
 }
 
+```
+
 GET '/questions'
 
 - General:
 
   - Returns an object with four keys: a list of question objects, a boolean success value, a total number of questions int value, a categories object and a current category value string which is set to None. Each question object contains five key:value pairs: "answer":answer_string, "category":category_string, "difficulty":difficulty_int, "id":id_int and "question":question_string. The categories object is a dictionary of id:category_string key:value pairs.
-  - Results are paginated in groups of 10. Include a request argument to choose page number, starting from 1. None given defaults to 1.
+  - Results are paginated in groups of 10.
+  - Request Arguments: include a request argument to choose page number, starting from 1. None given defaults to 1.
 
 - Sample: `curl http://127.0.0.1:5000/questions` or `curl http://127.0.0.1:5000/questions?page=2`
+
+```
 
 {
 "categories": {
@@ -208,6 +215,32 @@ GET '/questions'
 
 ```
 
+POST '/questions'
+
+- General:
+
+  - Creates a new question using the submitted question string, answer string, difficulty integer value and category integer value.
+  - Returns an object with three keys: the added question object, a success boolean value, the new total number of questions integer
+  - Request Arguments: None
+
+- Sample: `curl -X POST -H "Content-Type: application/json" -d '{"question": "what is the color of the sky", "answer":"blue", "difficulty":"1", "category": "5"}' http://127.0.0.1:5000/questions`
+
+```
+
+{
+  "added_question": {
+    "answer": "blue",
+    "category": 5,
+    "difficulty": 1,
+    "id": 28,
+    "question": "what is the color of the sky"
+  },
+  "success": true,
+  "total_questions": 24
+}
+
+```
+
 ## Testing
 
 To run the tests, run
@@ -218,6 +251,8 @@ dropdb trivia_test
 createdb trivia_test
 psql trivia_test < trivia.psql
 python test_flaskr.py
+
+```
 
 ```
 
