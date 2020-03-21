@@ -350,7 +350,7 @@ POST '/quizzes'
 - General:
 
   - Get questions to play the quiz.
-  - Returns an object with two keys: question, a random question object within the given category, if provided, and that is not one of the previous questions, and a success boolean value
+  - Returns an object with two keys: question, a random question object within the given category, if provided, and that is not one of the previous questions or None if no more questions available, and a success boolean value
   - Request body parameters: category, a dictionary of two key:value pairs, "id":category_id and "type":category_string, and a list of previous questions id's
 
 - Sample: `curl -X POST -H "Content-Type:application/json" -d '{"previous_questions": [1,2], "quiz_category": {"type": "Science", "id": "1"}}' http://127.0.0.1:5000/quizzes`

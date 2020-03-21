@@ -74,7 +74,7 @@ def create_app(test_config=None):
             questions = Question.query.order_by(Question.id).all()
             formatted_questions = [question.format() for question in questions]
 
-            # pagination of 10 items per page
+            # Pagination of 10 items per page
             page = request.args.get('page', 1, type=int)
             start = (page - 1) * 10
             end = start + 10
@@ -152,17 +152,16 @@ def create_app(test_config=None):
   only question that include that string within their question.
   Try using the word "title" to start.
   '''
-    # combining the 2 endpoints above into one decorator
+    # Combining the 2 endpoints above into one decorator
     @app.route('/questions', methods=['POST'])
     def add_or_search_question():
         body = request.get_json()
-
-        # add new question
+        # Add new question
         question = body.get('question', None)
         answer = body.get('answer', None)
         difficulty = body.get('difficulty', None)
         category = body.get('category', None)
-        # search questions text by term
+        # Search questions text by term
         search = body.get('searchTerm', None)
 
         try:
@@ -251,8 +250,6 @@ def create_app(test_config=None):
     @app.route('/quizzes', methods=['POST'])
     def get_questions_to_play():
         body = request.get_json()
-
-        # add new question
         previous_questions = body.get('previous_questions', [])
         category = body.get('quiz_category', None)
 
@@ -272,6 +269,7 @@ def create_app(test_config=None):
             if len(available_questions):
                 return jsonify({"success": True, "question": random.choice(available_questions)})
             else:
+                # Returns question set to None to end the game when no more questions available
                 return jsonify({"success": True, "question": None})
 
         except:
