@@ -2,7 +2,7 @@
 
 ## API Reference
 
-[View the README.md within ./frontend for more details.](./backend/README.md)
+[View the README.md within ./backend for more details.](./backend/README.md)
 
 ## Full Stack Trivia
 
