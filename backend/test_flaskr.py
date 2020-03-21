@@ -21,7 +21,7 @@ class TriviaTestCase(unittest.TestCase):
 
         self.new_question = {
             'question': "In which city is the Empire State Building located?",
-            'category': '3',
+            'category': 3,
             'difficulty': 2,
             'answer': 'New York City'
         }
@@ -101,7 +101,6 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'Not Found')
 
     # Add new question
-
     def test_add_new_question(self):
         res = self.client().post('/questions', json=self.new_question)
         data = json.loads(res.data)
@@ -111,13 +110,13 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['added_question'])
         self.assertTrue(data['total_questions'])
 
-    def test_405_if_new_question_add_not_allowed(self):
-        res = self.client().post('questions/45', json=self.new_question)
+    def test_422_if_new_question_add_not_allowed(self):
+        res = self.client().post('/questions', json={})
         data = json.loads(res.data)
 
-        self.assertEqual(res.status_code, 405)
+        self.assertEqual(res.status_code, 422)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Method Not Allowed')
+        self.assertEqual(data['message'], 'Unprocessable')
 
     # get questions based on a search term
     def test_get_questions_search_with_results(self):
@@ -137,6 +136,43 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
         self.assertEqual(data['total_questions'], 0)
         self.assertEqual(len(data['questions']), 0)
+
+    # get questions by category
+    def test_get_questions_by_category(self):
+        res = self.client().get('/categories/1/questions')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(data['total_questions'], 3)
+        self.assertEqual(len(data['questions']), 3)
+
+    def test_400_if_category_does_not_exist(self):
+        res = self.client().get('/categories/10/questions')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Bad Request')
+
+    # get questions to play the quiz.
+    def test_get_questions_to_play(self):
+        res = self.client().post(
+            '/quizzes', json={'previous_questions': [], 'quiz_category': {'type': 'Science', 'id': '1'}})
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(data['question'])
+
+    def test_422_if_bad_route(self):
+        res = self.client().post('/quizzes',
+                                 json={})
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Unprocessable')
 
 
 # Make the tests conveniently executable

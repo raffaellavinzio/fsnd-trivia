@@ -77,13 +77,8 @@ The API will return three error types when requests fail:
 
 - 400: Bad Request
 - 404: Not Found
-- 405: Method Not Allowed
-- 422: Not Processable
+- 422: Unprocessable
 - 500: Server Error
-
-5. Create a POST endpoint to get questions based on category.
-6. Create a POST endpoint to get questions based on a search term. It should return any questions for whom the search term is a substring of the question.
-7. Create a POST endpoint to get questions to play the quiz. This endpoint should take category and previous question parameters and return a random questions within the given category, if provided, and that is not one of the previous questions.
 
 ### Endpoint Library
 
@@ -92,7 +87,7 @@ GET '/categories'
 - General:
 
   - Returns an object with two keys, categories, a dictionary object of id: category_string key:value pairs, and success, a boolean for the query execution status.
-  - Request Arguments: None
+  - Request parameters: None
 
 - Sample: `curl http://127.0.0.1:5000/categories`
 
@@ -112,13 +107,13 @@ GET '/categories'
 
 ```
 
-GET '/questions'
+GET '/questions' ('/questions?page=1')
 
 - General:
 
   - Returns an object with four keys: a list of question objects, a boolean success value, a total number of questions int value, a categories object and a current category value string which is set to None. Each question object contains five key:value pairs: "answer":answer_string, "category":category_string, "difficulty":difficulty_int, "id":id_int and "question":question_string. The categories object is a dictionary of id:category_string key:value pairs.
   - Results are paginated in groups of 10.
-  - Request Arguments: include a request argument to choose page number, starting from 1. None given defaults to 1.
+  - Request query parameters: include a request argument to choose page number, starting from 1. None given defaults to 1.
 
 - Sample: `curl http://127.0.0.1:5000/questions` or `curl http://127.0.0.1:5000/questions?page=2`
 
@@ -212,13 +207,13 @@ GET '/questions'
 
 ```
 
-POST '/questions/{question_id}'
+DELETE '/questions/{question_id}'
 
 - General:
 
   - Deletes the question of the given `id` if it exists.
   - Returns an object with three keys: the deleted question object, a success boolean value, the updated total number of questions integer
-  - Request Arguments: question id
+  - Request path parameters: question id
 
 - Sample: `curl -X DELETE http://127.0.0.1:5000/questions/21`
 
@@ -238,13 +233,13 @@ POST '/questions/{question_id}'
 
 ```
 
-POST '/questions'
+POST '/questions' (add)
 
 - General:
 
   - Creates a new question using the submitted question string, answer string, difficulty integer value and category integer value.
   - Returns an object with three keys: the added question object, a success boolean value, the new total number of questions integer
-  - Request Arguments: None
+  - Request body parameters: question string, answer string, difficulty rating number, category id
 
 - Sample: `curl -X POST -H "Content-Type: application/json" -d '{"question": "what is the color of the sky", "answer":"blue", "difficulty":"1", "category": "5"}' http://127.0.0.1:5000/questions`
 
@@ -264,13 +259,13 @@ POST '/questions'
 
 ```
 
-POST '/questions'
+POST '/questions' (search)
 
 - General:
 
   - Searches matching questions for a given search phrase, case insensitive
   - Returns any questions for whom the search term is a substring, that is a list of objects with three keys: the list of matching question objects, a success boolean value, the total number of matching questions found integer
-  - Request Arguments: None
+  - Request body parameters: search term string
 
 - Sample with results: `curl -X POST -H "Content-Type: application/json" -d '{"searchTerm": "title"}' http://127.0.0.1:5000/questions`
 
@@ -313,6 +308,67 @@ POST '/questions'
 
 ```
 
+GET '/categories/{category_id}/questions'
+
+- General:
+
+  - Get questions by category id
+  - Returns an object with four keys: the list of question objects for the selected category, a success boolean value, the total number of questions for the selected category integer, the current category value set to Null
+  - Request path parameters: category id
+
+- Sample: `curl http://127.0.0.1:5000/categories/1/questions`
+
+```
+
+{
+  "current_category": null,
+  "questions": [
+    {
+      "answer": "The Liver",
+      "category": 1,
+      "difficulty": 4,
+      "id": 20,
+      "question": "What is the heaviest organ in the human body?"
+    },
+    {
+      "answer": "Blood",
+      "category": 1,
+      "difficulty": 4,
+      "id": 22,
+      "question": "Hematology is a branch of medicine involving the study of what?"
+    }
+  ],
+  "success": true,
+  "total_questions": 2
+}
+
+```
+
+POST '/quizzes'
+
+- General:
+
+  - Get questions to play the quiz.
+  - Returns an object with two keys: question, a random question object within the given category if provided and that is not one of the previous questions, and a success boolean value
+  - Request body parameters: category, a dictionary of two key:value pairs for "category id" and "category string", and a list of previous questions id's
+
+- Sample: `curl -X POST -H "Content-Type:application/json" -d '{"previous_questions": [], "quiz_category": {"type": "Science", "id": "1"}}' http://127.0.0.1:5000/quizzes`
+
+```
+
+{
+  "question": {
+    "answer": "The Liver",
+    "category": 1,
+    "difficulty": 4,
+    "id": 20,
+    "question": "What is the heaviest organ in the human body?"
+  },
+  "success": true
+}
+
+```
+
 ## Testing
 
 To run the tests, run
@@ -323,9 +379,5 @@ dropdb trivia_test
 createdb trivia_test
 psql trivia_test < trivia.psql
 python test_flaskr.py
-
-```
-
-```
 
 ```
