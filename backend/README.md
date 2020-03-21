@@ -73,12 +73,11 @@ Errors are returned as JSON objects in the following format:
 }
 ```
 
-The API will return three error types when requests fail:
+The API will return these error types when requests fail:
 
 - 400: Bad Request
 - 404: Not Found
 - 422: Unprocessable
-- 500: Server Error
 
 ### Endpoint Library
 
@@ -86,6 +85,7 @@ GET '/categories'
 
 - General:
 
+  - Get the list of categories
   - Returns an object with two keys, categories, a dictionary object of id: category_string key:value pairs, and success, a boolean for the query execution status.
   - Request parameters: None
 
@@ -111,11 +111,12 @@ GET '/questions' ('/questions?page=1')
 
 - General:
 
-  - Returns an object with four keys: a list of question objects, a boolean success value, a total number of questions int value, a categories object and a current category value string which is set to None. Each question object contains five key:value pairs: "answer":answer_string, "category":category_string, "difficulty":difficulty_int, "id":id_int and "question":question_string. The categories object is a dictionary of id:category_string key:value pairs.
+  - Get all the questions
+  - Returns an object with four keys: a list of question objects, a boolean success value, a total number of questions int value, a categories object and a current category value string which is set to None. Each question object contains five key:value pairs: "answer":answer_string, "category":category_string, "difficulty":difficulty_int, "id":id_int and "question":question_string. The categories object is a dictionary of "id":category_string key:value pairs.
   - Results are paginated in groups of 10.
   - Request query parameters: include a request argument to choose page number, starting from 1. None given defaults to 1.
 
-- Sample: `curl http://127.0.0.1:5000/questions` or `curl http://127.0.0.1:5000/questions?page=2`
+- Sample: `curl http://127.0.0.1:5000/questions` or `curl http://127.0.0.1:5000/questions?page=1`
 
 ```
 
@@ -349,10 +350,10 @@ POST '/quizzes'
 - General:
 
   - Get questions to play the quiz.
-  - Returns an object with two keys: question, a random question object within the given category if provided and that is not one of the previous questions, and a success boolean value
-  - Request body parameters: category, a dictionary of two key:value pairs for "category id" and "category string", and a list of previous questions id's
+  - Returns an object with two keys: question, a random question object within the given category, if provided, and that is not one of the previous questions, and a success boolean value
+  - Request body parameters: category, a dictionary of two key:value pairs, "id":category_id and "type":category_string, and a list of previous questions id's
 
-- Sample: `curl -X POST -H "Content-Type:application/json" -d '{"previous_questions": [], "quiz_category": {"type": "Science", "id": "1"}}' http://127.0.0.1:5000/quizzes`
+- Sample: `curl -X POST -H "Content-Type:application/json" -d '{"previous_questions": [1,2], "quiz_category": {"type": "Science", "id": "1"}}' http://127.0.0.1:5000/quizzes`
 
 ```
 
